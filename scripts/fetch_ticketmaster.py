@@ -16,7 +16,7 @@ def fetch_ticketmaster_data():
         # Comprobar que la solicitud fue exitosa
         if response.status_code == 200:
             events = response.json()['_embedded']['events']  # Acceder a los eventos
-            print(f"Conexión existosa API Ticketmaster✅ {len(events)} eventos musicales encontrados")
+            print(f"✅ Conexión existosa API Ticketmaster {len(events)} eventos musicales encontrados")
             return events
         elif response.status_code == 401:
             print("❌ Error de autenticación: Verifica tu API Key.")
