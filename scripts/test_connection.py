@@ -1,6 +1,6 @@
 ### Test connection VS y MongoDB ###
 
-from pymongo import MongoClient
+from pymongo import MongoClient # type: ignore
 
 # Sustituir con mi cadena de conexion
 connection_string = "mongodb+srv://paulamcdata:Gp2025.@clustergp-eventos.c1syxjt.mongodb.net/?retryWrites=true&w=majority&appName=ClusterGP-Eventos"
