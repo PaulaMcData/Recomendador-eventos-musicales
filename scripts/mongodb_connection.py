@@ -7,8 +7,7 @@ def connect_to_mongodb():
         client = MongoClient(MONGO_URI)
 
         db = client[DB_NAME]
-        print("✅ Conexión exitosa a MongoDB")
-
+        
         # Crear la colección si no existe
         if COLLECTION_NAME not in db.list_collection_names():
             db.create_collection(COLLECTION_NAME)
