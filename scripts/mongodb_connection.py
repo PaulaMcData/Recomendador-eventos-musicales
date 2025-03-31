@@ -53,7 +53,7 @@ def save_or_update_event(event, unchanged_counter):
             print(f"🔄 Evento actualizado: {event['name']} (Estado: {existing_status_code} → {new_status_code})")
         else:
             unchanged_counter[0] += 1  # Contador de eventos sin cambios
-            print(f"✅ Evento sin cambios: {unchanged_counter}")
+            
     else:
 
         collection.insert_one(event)

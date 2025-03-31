@@ -31,7 +31,7 @@ def fetch_ticketmaster_data():
                     filtered_events = [event for event in events if "code" in event.get("dates", {}).get("status", {})]
 
                     all_events.extend(filtered_events)
-                    print(f"✅ {len(filtered_events)} eventos extraídos de {city} (página {page})")
+                    print(f"🔍 {len(filtered_events)} eventos extraídos de {city} (página {page})")
 
                     if page >= 4:  # Evitamos el límite de 1000 registros
                         break
