@@ -3,47 +3,54 @@ from config import MONGO_URI, DB_NAME, COLLECTION_NAME
 
 def connect_to_mongodb():
     try:
-        # Conectar al cliente de MongoDB usando la URI desde config.py
+
         client = MongoClient(MONGO_URI)
-        # Seleccionar la BBDD "ticketmaster_db"
+
         db = client[DB_NAME]
         print("✅ Conexión exitosa a MongoDB")
 
         # Crear la colección si no existe
+        if COLLECTION_NAME not in db.list_collection_names():
+            db.create_collection(COLLECTION_NAME)
+            print(f"📁 Colección '{COLLECTION_NAME}' creada.")
+
         collection = db[COLLECTION_NAME]
 
-        # Crear un índice único en el campo "id" (si es necesario)
-        collection.create_index([("id", 1)], unique=True)
-        
+        # Crear un índice único en "id" (si no existe)
+        if "id_1" not in collection.index_information():
+            collection.create_index([("id", 1)], unique=True)
+
         return db
     
     except Exception as e:
-        print(f"❌ Error de conexión: {e}")  # Aquí corregimos el f-string
+        print(f"❌ Error de conexión: {e}")
         return None
 
 def save_or_update_event(event):
-    # LLamamos a la función anterior para conectar con MongoDB
+
     db = connect_to_mongodb()
     if db is None:
+        print("❌ No se pudo conectar a MongoDB.")
         return
-
-    # Seleccionar la colección "events"
+    
     collection = db[COLLECTION_NAME]
-    print(f"📁 Actualizando eventos de la colección {COLLECTION_NAME}")
+    print(f"📁 Actualizando eventos en la colección '{COLLECTION_NAME}'")
 
-    # Verificar si el evento ya existe
+    # Asegurar que la colección existe antes de buscar
+    if COLLECTION_NAME not in db.list_collection_names():
+        print(f"⚠️ La colección '{COLLECTION_NAME}' no existe, se creará al insertar el primer evento.")
+
+    # Buscar si el evento ya existe
     existing_event = collection.find_one({"id": event["id"]})
 
-    if existing_event:  # Si el evento existe en la base de datos
-        print(f"📑 Evento ya existente: {event['name']}")
-        # Verificar si el estado ha cambiado
+    if existing_event:
         if existing_event.get("status") != event.get("status"):
-            # Actualizar el evento si el estado ha cambiado
+
             collection.update_one({"id": event["id"]}, {"$set": event})
             print(f"🔄 Evento actualizado: {event['name']}")
         else:
-            print(f"✅ Evento sin cambios: {event['name']}")  # No actualiza si no hay cambios
+            print(f"✅ Evento sin cambios: {event['name']}")
     else:
-        # Si no existe, insertar el nuevo evento
+        
         collection.insert_one(event)
         print(f"🆕 Nuevo evento guardado: {event['name']}")

@@ -1,9 +1,12 @@
+
 from fetch_ticketmaster import fetch_ticketmaster_data
 from mongodb_connection import save_or_update_event
 
 def main():
     print("🔄 Iniciando la recopilación de eventos musicales en España...")
     events = fetch_ticketmaster_data()
+
+    print(f"📊 Eventos recuperados: {len(events)}")  # 🔍 Verifica que se obtienen eventos
 
     if events:
         for event in events:
