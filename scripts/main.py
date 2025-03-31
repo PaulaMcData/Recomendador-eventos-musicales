@@ -14,7 +14,7 @@ def main():
         for event in events:
             save_or_update_event(event, unchanged_counter)
 
-        print(f"✅ Total de eventos sin cambios: {unchanged_counter[0]}")
+        print(f"👁️ Eventos sin cambios: {unchanged_counter[0]}")
         print("✅ Proceso finalizado correctamente.")
     else:
         print("❌ No se encontraron eventos.")
