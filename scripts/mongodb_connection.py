@@ -40,19 +40,16 @@ def save_or_update_event(event, unchanged_counter):
 
     # Buscar si el evento ya existe en la BD
     existing_event = collection.find_one({"id": event["id"]})
-
-    # Extraer el status.code del nuevo evento
+    existing_status_code = existing_event.get("dates", {}).get("status", {}).get("code") if existing_event else None
     new_status_code = event.get("dates", {}).get("status", {}).get("code")
 
     if existing_event:
-        # Extraer el status.code del evento existente
-        existing_status_code = existing_event.get("dates", {}).get("status", {}).get("code")
-
-        if existing_status_code != new_status_code:
+        # Comparar todos los datos del evento, no solo el status.code
+        if existing_event != event:
             collection.update_one({"id": event["id"]}, {"$set": event})
             print(f"🔄 Evento actualizado: {event['name']} (Estado: {existing_status_code} → {new_status_code})")
         else:
-            unchanged_counter[0] += 1  # Contador de eventos sin cambios
+            unchanged_counter[0] += 1
             
     else:
 

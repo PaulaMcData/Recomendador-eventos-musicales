@@ -28,10 +28,10 @@ def fetch_ticketmaster_data():
                     events = data['_embedded']['events']
 
                     # 🔍 Filtrar eventos que contengan "status"
-                    filtered_events = [event for event in events if "code" in event.get("dates", {}).get("status", {})]
+                    filtered_events = [event for event in events if event.get("dates", {}).get("status", {}).get("code")]
 
                     all_events.extend(filtered_events)
-                    print(f"🔍 {len(filtered_events)} eventos extraídos de {city} (página {page})")
+                    print(f"🔍 {len(filtered_events)} eventos en {city} (pág.{page})")
 
                     if page >= 4:  # Evitamos el límite de 1000 registros
                         break
