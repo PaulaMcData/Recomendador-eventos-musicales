@@ -40,17 +40,22 @@ def save_or_update_event(event):
     if COLLECTION_NAME not in db.list_collection_names():
         print(f"⚠️ La colección '{COLLECTION_NAME}' no existe, se creará al insertar el primer evento.")
 
-    # Buscar si el evento ya existe
+    # Buscar si el evento ya existe en la BD
     existing_event = collection.find_one({"id": event["id"]})
 
-    if existing_event:
-        if existing_event.get("status") != event.get("status"):
+    # Extraer el status.code del nuevo evento
+    new_status_code = event.get("dates", {}).get("status", {}).get("code")
 
+    if existing_event:
+        # Extraer el status.code del evento existente
+        existing_status_code = existing_event.get("dates", {}).get("status", {}).get("code")
+
+        if existing_status_code != new_status_code:
             collection.update_one({"id": event["id"]}, {"$set": event})
-            print(f"🔄 Evento actualizado: {event['name']}")
+            print(f"🔄 Evento actualizado: {event['name']} (Estado: {existing_status_code} → {new_status_code})")
         else:
-            print(f"✅ Evento sin cambios: {event['name']}")
+            print(f"✅ Evento sin cambios: {event['name']} (Estado: {existing_status_code})")
     else:
         
         collection.insert_one(event)
-        print(f"🆕 Nuevo evento guardado: {event['name']}")
+        print(f"🆕 Nuevo evento guardado: {event['name']} (Estado: {new_status_code})")
