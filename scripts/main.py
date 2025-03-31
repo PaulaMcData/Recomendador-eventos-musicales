@@ -7,6 +7,7 @@ def main():
     events = fetch_ticketmaster_data()
 
     print(f"📊 Eventos recuperados: {len(events)}")  # 🔍 Verifica que se obtienen eventos
+    print(f"📁 Actualizando la colección en MongoDB")
 
     if events:
         for event in events:
