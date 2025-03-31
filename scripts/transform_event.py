@@ -22,7 +22,7 @@ def transform_event_data(event):
         "event_tags": [event.get("name") for t in event.get("classifications", [{}])[0].get("subGenre", {}).get("name", [])],
         "start_date": event.get("sales", {}).get("public", {}).get("startDateTime"),
         "end_date": event.get("sales", {}).get("public", {}).get("endDateTime"),
-        "organizer": {"name": event.get("promoter", {[]})[0].get("name")},
+        "organizer": {"name": event.get("promoter", [{}])[0].get("name")},
         "ticket_status": event.get("dates", {}).get("status", {}).get("code"),
         "url_compra_entradas": event.get("url"),
         "location": {
