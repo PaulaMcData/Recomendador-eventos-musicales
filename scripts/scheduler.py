@@ -7,9 +7,9 @@ def run_main():
     subprocess.run(["python", "main.py"])
 
 # Programar ejecución diaria
-schedule.every().day.at("06:00").do(run_main)
+schedule.every().day.at("18:46").do(run_main)
 
-print("🕕 Scheduler activado: La actualización diaria se ejcutará a las 6 AM.")
+print("🕕 Scheduler activado: La actualización diaria se ejecutará a las 6 AM.")
 
 while True:
     schedule.run_pending()
