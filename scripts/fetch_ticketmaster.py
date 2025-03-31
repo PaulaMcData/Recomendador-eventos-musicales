@@ -2,45 +2,65 @@ import requests
 from config import API_KEY, API_URL
 from cities import COUNTRY_CODE, SPAIN_CITIES
 
-# Petición a la API de Ticketmaster para obtener eventos musicales en España
-def fetch_ticketmaster_data():
-    all_events = []  # Lista para almacenar todos los eventos musicales
+MAX_RETRIES = 3  # Intentos máximos en caso de fallo
+PAGE_LIMIT = 4   # Límite de páginas para evitar 1000+ registros
 
-    for city in SPAIN_CITIES:
-        page = 0  # Comenzamos desde la página 0
-        while True:
-            # Parámetros de la solicitud
-            params = {
-                'apikey': API_KEY,
-                'classificationName': 'Music',  # Filtro eventos musicales
-                'countryCode': COUNTRY_CODE,  # Filtro España
-                'city': city,  # Ciudad actual dentro del listado de ciudades de España
-                'size': 200,  # Máximo eventos por página
-                'page': page  # Página actual de los resultados
-            }
+def fetch_city_events(city):
+    """Obtiene eventos musicales de una ciudad específica desde la API de Ticketmaster."""
+    all_events = []
+    page = 0 
 
-            response = requests.get(API_URL, params=params)
+    while page <= PAGE_LIMIT:
+        params = {
+            'apikey': API_KEY,
+            'classificationName': 'Music',  # Filtro eventos musicales
+            'countryCode': COUNTRY_CODE,    # Filtro España
+            'city': city,                   # Ciudad actual
+            'size': 200,                     # Máx. eventos por página
+            'page': page                     # Página actual
+        }
 
-            # Comprobar que la solicitud fue exitosa
-            if response.status_code == 200:
-                data = response.json()
-                if '_embedded' in data and 'events' in data['_embedded']:
-                    events = data['_embedded']['events']
+        retries = 0
+        while retries < MAX_RETRIES:
+            try:
+                response = requests.get(API_URL, params=params, timeout=10)
+                
+                if response.status_code == 200:
+                    data = response.json()
+                    if '_embedded' in data and 'events' in data['_embedded']:
+                        events = data['_embedded']['events']
+                        filtered_events = [event for event in events if event.get("dates", {}).get("status", {}).get("code")]
+                        all_events.extend(filtered_events)
+                        print(f"🔍 {len(filtered_events)} eventos en {city} (pág.{page})")
 
-                    # Filtrar eventos que contengan "status"
-                    filtered_events = [event for event in events if event.get("dates", {}).get("status", {}).get("code")]
+                        # Si el número de eventos es menor que el tamaño de página, ya no hay más eventos
+                        if len(events) < 200:
+                            return all_events
 
-                    all_events.extend(filtered_events)
-                    print(f"🔍 {len(filtered_events)} eventos en {city} (pág.{page})")
-
-                    if page >= 4:  # Evitamos el límite de 1000 registros
-                        break
-
-                    page += 1
+                        page += 1        
+                    else:
+                        return all_events  # No más eventos en esta ciudad
                 else:
-                    break  # No hay más eventos en esta ciudad
+                    print(f"⚠️ Error {response.status_code} en {city}. Reintentando...")
+                    retries += 1
 
-            else:
-                print(f"⚠️ Error en {city}: {response.status_code}")
-                break 
+            except requests.exceptions.RequestException as e:
+                print(f"⏳ Error de conexión en {city}: {e}. Reintentando...")
+                retries += 1
+
+        if retries >= MAX_RETRIES:
+            print(f"❌ No se pudo obtener eventos en {city} tras varios intentos.")
+            return all_events
+
+    return all_events
+
+
+def fetch_ticketmaster_data():
+    """Obtiene eventos musicales de todas las ciudades en España."""
+    all_events = []
+    for city in SPAIN_CITIES:
+        city_events = fetch_city_events(city)
+        all_events.extend(city_events)
+    
+    print(f"🎵 Total eventos recopilados: {len(all_events)}")
     return all_events
