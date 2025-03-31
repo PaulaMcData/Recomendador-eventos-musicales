@@ -34,7 +34,7 @@ def save_or_update_event(event):
         return
     
     collection = db[COLLECTION_NAME]
-    print(f"📁 Actualizando eventos en la colección '{COLLECTION_NAME}'")
+    print(f"📁 Actualizando la colección '{COLLECTION_NAME}'")
 
     # Asegurar que la colección existe antes de buscar
     if COLLECTION_NAME not in db.list_collection_names():
@@ -56,6 +56,6 @@ def save_or_update_event(event):
         else:
             print(f"✅ Evento sin cambios: {event['name']} (Estado: {existing_status_code})")
     else:
-        
+
         collection.insert_one(event)
         print(f"🆕 Nuevo evento guardado: {event['name']} (Estado: {new_status_code})")
