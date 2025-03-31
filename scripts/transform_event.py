@@ -22,16 +22,16 @@ def transform_event_data(event):
         "event_tags": [event.get("name") for t in event.get("classifications", [{}])[0].get("subGenre", {}).get("name", [])],
         "start_date": event.get("sales", {}).get("public", {}).get("startDateTime"),
         "end_date": event.get("sales", {}).get("public", {}).get("endDateTime"),
-        "organizer": event.get("promoter", [{}])[0].get("name"),
+        "organizer": event.get("promoter", {}).get("name"),
         "ticket_status": event.get("dates", {}).get("status", {}).get("code"),
         "url_compra_entradas": event.get("url"),
         "location": {
-            "city": event.get("_embedded", {}).get("venues", [{}])[0].get("city", [{}])[0].get("name"),
-            "country": event.get("_embedded", {}).get("venues", [{}])[0].get("country", [{}])[0].get("name"),
-            "latitude": event.get("_embedded", {}).get("venues", {}).get("location", {}).get("latitude"),
-            "longitude": event.get("_embedded", {}).get("venues", {}).get("location", {}).get("longitude"),
-            "postalCode": event.get("_embedded", {}).get("venues", {}).get("postalCode"),
-            "address": event.get("_embedded", {}).get("venues", [{}])[0].get("address", [{}])[0].get("line1"),
+            "city": event.get("_embedded", {}).get("venues", [{}])[0].get("city", {}).get("name"),
+            "country": event.get("_embedded", {}).get("venues", [{}])[0].get("country", {}).get("name"),
+            "latitude": event.get("_embedded", {}).get("venues", [{}])[0].get("location", {}).get("latitude"),
+            "longitude": event.get("_embedded", {}).get("venues", [{}])[0].get("location", {}).get("longitude"),
+            "postalCode": event.get("_embedded", {}).get("venues", [{}])[0].get("postalCode"),
+            "address": event.get("_embedded", {}).get("venues", [{}])[0].get("address", {}).get("line1"),
             "place": event.get("_embedded", {}).get("venues", [{}])[0].get("name")
         }     
     }
