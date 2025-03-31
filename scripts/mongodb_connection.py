@@ -9,6 +9,12 @@ def connect_to_mongodb():
         db = client[DB_NAME]
         print("✅ Conexión exitosa a MongoDB")
 
+        # Crear la colección si no existe
+        collection = db[COLLECTION_NAME]
+
+        # Crear un índice único en el campo "id" (si es necesario)
+        collection.create_index([("id", 1)], unique=True)
+        
         return db
     
     except Exception as e:
@@ -25,10 +31,11 @@ def save_or_update_event(event):
     collection = db[COLLECTION_NAME]
     print(f"📁 Actualizando eventos de la colección {COLLECTION_NAME}")
 
-    # Buscar el evento en la colección usando el ID del evento
+    # Verificar si el evento ya existe
     existing_event = collection.find_one({"id": event["id"]})
 
     if existing_event:  # Si el evento existe en la base de datos
+        print(f"📑 Evento ya existente: {event['name']}")
         # Verificar si el estado ha cambiado
         if existing_event.get("status") != event.get("status"):
             # Actualizar el evento si el estado ha cambiado
