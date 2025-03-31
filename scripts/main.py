@@ -1,18 +1,16 @@
 from fetch_ticketmaster import fetch_ticketmaster_data
-from mongodb_connection import save_events_to_mongodb
+from mongodb_connection import save_or_update_event
 
-# Test de conexión y funcionamiento de la API de Ticketmaster y MongoDB
-def test_fetch_and_save():
-    print("🔄 Iniciando la prueba de fetch y guardado de datos...")
+def main():
+    print("🔄 Iniciando la recopilación de eventos musicales en España...")
     events = fetch_ticketmaster_data()
+
     if events:
-        inserted_ids = save_events_to_mongodb(events)
-        if inserted_ids:
-            print(f"✅ {len(inserted_ids)} eventos guardados correctamente en MongoDB.")
-        else:
-            print("❌ No se guardaron eventos en MongoDB.")
+        for event in events:
+            save_or_update_event(event)
+        print("✅ Proceso finalizado correctamente.")
     else:
-        print("❌ No se encontraron eventos musicales o hubo un error en la API.")
+        print("❌ No se encontraron eventos.")
 
 if __name__ == "__main__":
-    test_fetch_and_save()
+    main()
