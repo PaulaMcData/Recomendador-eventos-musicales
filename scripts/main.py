@@ -1,4 +1,3 @@
-
 from fetch_ticketmaster import fetch_ticketmaster_data
 from mongodb_connection import save_or_update_event
 
@@ -10,8 +9,12 @@ def main():
     print(f"📁 ..actualizando la colección en MongoDB")
 
     if events:
+        unchanged_counter = [0]  # Inicializamos el contador
+
         for event in events:
-            save_or_update_event(event)
+            save_or_update_event(event, unchanged_counter)
+
+        print(f"✅ Total de eventos sin cambios: {unchanged_counter[0]}")
         print("✅ Proceso finalizado correctamente.")
     else:
         print("❌ No se encontraron eventos.")
