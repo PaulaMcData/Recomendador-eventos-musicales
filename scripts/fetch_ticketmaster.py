@@ -27,7 +27,7 @@ def fetch_ticketmaster_data():
                 if '_embedded' in data and 'events' in data['_embedded']:
                     events = data['_embedded']['events']
 
-                    # 🔍 Filtrar eventos que contengan "status"
+                    # Filtrar eventos que contengan "status"
                     filtered_events = [event for event in events if event.get("dates", {}).get("status", {}).get("code")]
 
                     all_events.extend(filtered_events)
