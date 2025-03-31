@@ -6,9 +6,6 @@ def transform_event_data(event):
         "id": event.get("id"),
         "name": event.get("name"),
         "artist": event.get("_embedded", {}).get("attractions", [{}])[0].get("name"),
-        "performers": [
-            {"name": artist.get("name")} for artist in event.get("_embedded", {}).get("attractions", [])
-        ],
         "event_date": event.get("dates", {}).get("start", {}).get("localDate"),
         "event_time": event.get("dates", {}).get("start", {}).get("localTime"),
         "event_datetime": event.get("dates", {}).get("start", {}).get("dateTime"),
