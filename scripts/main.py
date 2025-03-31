@@ -6,8 +6,8 @@ def main():
     print("🔄 Iniciando la recopilación de eventos musicales en España...")
     events = fetch_ticketmaster_data()
 
-    print(f"📊 Eventos recuperados: {len(events)}")  # 🔍 Verifica que se obtienen eventos
-    print(f"📁 Actualizando la colección en MongoDB")
+    print(f"📊 Eventos encontrados: {len(events)}")  # 🔍 Verifica que se obtienen eventos
+    print(f"📁 ..actualizando la colección en MongoDB")
 
     if events:
         for event in events:

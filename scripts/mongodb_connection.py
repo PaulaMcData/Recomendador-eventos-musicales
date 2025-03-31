@@ -7,7 +7,7 @@ def connect_to_mongodb():
         client = MongoClient(MONGO_URI)
 
         db = client[DB_NAME]
-        
+
         # Crear la colección si no existe
         if COLLECTION_NAME not in db.list_collection_names():
             db.create_collection(COLLECTION_NAME)
@@ -25,7 +25,7 @@ def connect_to_mongodb():
         print(f"❌ Error de conexión: {e}")
         return None
 
-def save_or_update_event(event):
+def save_or_update_event(event, unchanged_counter):
 
     db = connect_to_mongodb()
     if db is None:
@@ -52,8 +52,9 @@ def save_or_update_event(event):
             collection.update_one({"id": event["id"]}, {"$set": event})
             print(f"🔄 Evento actualizado: {event['name']} (Estado: {existing_status_code} → {new_status_code})")
         else:
-            print(f"✅ Evento sin cambios: {event['name']} (Estado: {existing_status_code})")
+            unchanged_counter[0] += 1  # Contador de eventos sin cambios
+            print(f"✅ Evento sin cambios: {unchanged_counter}")
     else:
 
         collection.insert_one(event)
-        print(f"🆕 Nuevo evento guardado: {event['name']} (Estado: {new_status_code})")
+        print(f"🆕 Evento nuevo: {event['name']} (Estado: {new_status_code})")
