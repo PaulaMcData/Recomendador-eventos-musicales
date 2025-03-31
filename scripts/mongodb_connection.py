@@ -18,19 +18,25 @@ def connect_to_mongodb():
 def save_or_update_event(event):
     # LLamamos a la función anterior para conectar con MongoDB
     db = connect_to_mongodb()
+    if db is None:
+        return
+
     # Seleccionar la colección "events"
     collection = db[COLLECTION_NAME]
-    print(f"📁 Actualizando eventos de la colección {collection}")
+    print(f"📁 Actualizando eventos de la colección {COLLECTION_NAME}")
 
+    # Buscar el evento en la colección usando el ID del evento
     existing_event = collection.find_one({"id": event["id"]})
 
-    # Actualizar eventos si el status ha cambiado y si es nuevo se guarda en la base de datos
-    if existing_event: # Si el evento existe
-        if existing_event["status"] != event["status"]:
-            collection.update_one({"id": event["id"]}, {"$set": event}) # Actualiza si cambia de estado
+    if existing_event:  # Si el evento existe en la base de datos
+        # Verificar si el estado ha cambiado
+        if existing_event.get("status") != event.get("status"):
+            # Actualizar el evento si el estado ha cambiado
+            collection.update_one({"id": event["id"]}, {"$set": event})
             print(f"🔄 Evento actualizado: {event['name']}")
         else:
-            print(f"✅ Evento sin cambios: {event['name']}") # No actualiza si no cambia de estado
+            print(f"✅ Evento sin cambios: {event['name']}")  # No actualiza si no hay cambios
     else:
-        collection.insert_one(event) # Inserta un evento nuevo (si no lo encuentra) y lo guarda
-        print(f"🆕 Nuevo evento guardado: {event['name']}") 
+        # Si no existe, insertar el nuevo evento
+        collection.insert_one(event)
+        print(f"🆕 Nuevo evento guardado: {event['name']}")
