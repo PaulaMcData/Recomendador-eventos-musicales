@@ -1,11 +1,12 @@
-# Transforma los datos de la API de Ticketmaster para almacenarlos en MongoDB de forma estructurada
-
+# Transformacion de los datos obtenidos de la API Ticketmaster
 def transform_event_data(event):
-    
+    venue = event.get("_embedded", {}).get("venues", [{}])
+    venue = venue[0] if venue else {}
+
     transformed_event = {
         "id": event.get("id"),
         "name": event.get("name"),
-        "artist": event.get("_embedded", {}).get("attractions", [{}])[0].get("name"),
+        "artist": event.get("_embedded", {}).get("attractions", [{}])[0].get("name", None),
         "event_date": event.get("dates", {}).get("start", {}).get("localDate"),
         "event_time": event.get("dates", {}).get("start", {}).get("localTime"),
         "event_datetime": event.get("dates", {}).get("start", {}).get("dateTime"),
@@ -14,21 +15,30 @@ def transform_event_data(event):
         "subgenre": event.get("classifications", [{}])[0].get("subGenre", {}).get("name"),
         "family_friendly": event.get("classifications", [{}])[0].get("family"),
         "event_type": event.get("type"),
-        "event_image_url": event.get("images", [{}])[1].get("url"),
+        "event_image_url": event.get("images", [{}])[0].get("url", None),
         "start_date": event.get("sales", {}).get("public", {}).get("startDateTime"),
         "end_date": event.get("sales", {}).get("public", {}).get("endDateTime"),
-        "organizer": event.get("promoter", {}).get("name"),
+        "organizer": event.get("promoter", {}).get("name", None),
         "ticket_status": event.get("dates", {}).get("status", {}).get("code"),
         "url_compra_entradas": event.get("url"),
         "location": {
-            "city": event.get("_embedded", {}).get("venues", [{}])[0].get("city", {}).get("name"),
-            "country": event.get("_embedded", {}).get("venues", [{}])[0].get("country", {}).get("name"),
-            "latitude": event.get("_embedded", {}).get("venues", [{}])[0].get("location", {}).get("latitude"),
-            "longitude": event.get("_embedded", {}).get("venues", [{}])[0].get("location", {}).get("longitude"),
-            "postalCode": event.get("_embedded", {}).get("venues", [{}])[0].get("postalCode"),
-            "address": event.get("_embedded", {}).get("venues", [{}])[0].get("address", {}).get("line1"),
-            "place": event.get("_embedded", {}).get("venues", [{}])[0].get("name")
-        }     
+            "city": venue.get("city", None).get("name"),
+            "country": venue.get("country", None).get("name"),
+            "latitude": venue.get("location", {}).get("latitude"),
+            "longitude": venue.get("location", {}).get("longitude"),
+            "postalCode": venue.get("postalCode"),
+            "address": venue.get("address", {}).get("line1"),
+            "place": venue.get("name")
+        },
+        "ticket_types": [
+            {
+                "type": ticket.get("type", "Standard"),
+                "currency": ticket.get("currency"),
+                "min_price": ticket.get("min"),
+                "max_price": ticket.get("max")
+            }
+            for ticket in event.get("priceRanges") or []
+        ]
     }
     
     return transformed_event
