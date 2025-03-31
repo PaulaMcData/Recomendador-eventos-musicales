@@ -22,24 +22,17 @@ def transform_event_data(event):
         "event_tags": [event.get("name") for t in event.get("classifications", [{}])[0].get("subGenre", {}).get("name", [])],
         "start_date": event.get("sales", {}).get("public", {}).get("startDateTime"),
         "end_date": event.get("sales", {}).get("public", {}).get("endDateTime"),
-        "organizer": {"name": event.get("promoter", {}).get("name")},
+        "organizer": {"name": event.get("promoter", {[]})[0].get("name")},
         "ticket_status": event.get("dates", {}).get("status", {}).get("code"),
         "url_compra_entradas": event.get("url"),
-        "ticket_types": [
-            {
-                "type": ticket.get("type"),
-                "price": ticket.get("min")  # Precio mínimo
-            }
-            for ticket in event.get("priceRanges", [])
-        ],
         "location": {
-            "city": event.get("_embedded", {}).get("venues", {}).get("city"),
-            "country": event.get("_embedded", {}).get("venues", {}).get("country"),
+            "city": event.get("_embedded", {}).get("venues", [{}])[0].get("city", [{}])[0].get("name"),
+            "country": event.get("_embedded", {}).get("venues", [{}])[0].get("country", [{}])[0].get("name"),
             "latitude": event.get("_embedded", {}).get("venues", {}).get("location", {}).get("latitude"),
             "longitude": event.get("_embedded", {}).get("venues", {}).get("location", {}).get("longitude"),
             "postalCode": event.get("_embedded", {}).get("venues", {}).get("postalCode"),
-            "address": event.get("_embedded", {}).get("venues", {}).get("address"),
-            "place": event.get("_embedded", {}).get("venues", {}).get("name")
+            "address": event.get("_embedded", {}).get("venues", [{}])[0].get("address", [{}])[0].get("line1"),
+            "place": event.get("_embedded", {}).get("venues", [{}])[0].get("name")
         }     
     }
     
