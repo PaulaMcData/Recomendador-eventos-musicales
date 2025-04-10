@@ -21,7 +21,6 @@ def generate_fact_events():
     for event in events_collection.find():
         event_id = event.get("id")
         name = event.get("name")
-        date = event.get("event_date")
         artist_name = event.get("artist")
         genre_name = event.get("genre")
         subgenre_name = event.get("subgenre")
@@ -54,8 +53,6 @@ def generate_fact_events():
             "_id": event_id,
             "event_name": name if name else None,
             "artist_id": artist_id,
-            "event_date": date,
-            "event_time": event.get("event_time"),
             "event_datetime": event.get("event_datetime"),
             "segment": event.get("segment"),
             "genre_id": genre_id,
