@@ -7,6 +7,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '.
 from pymongo import MongoClient
 import hashlib
 from config_01 import MONGO_URI, DB_NAME
+from datetime import datetime
 
 # Función principal que transforma y normaliza los eventos de la colección 'events'
 def generate_fact_events():
