@@ -2,6 +2,7 @@ import sys
 import os
 from hashlib import md5
 from functools import partial 
+from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..')))
 import asyncio
 import logging
@@ -184,8 +185,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         cities_collection = db["cities"]
         genres_collection = db["genres"]
 
-
-        
         if last_command == "ciudad":
             # Buscar por ciudad
             matched_city = next((c for c in cities_collection.find() if normalizar_texto(c.get("city", "")) == user_input_norm), None)
@@ -198,9 +197,23 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
                     datos = obtener_datos_evento(event)
                     texto = formatear_evento(event, **datos)
+
+                    # Botones de acción
+                    buttons = []
+                    if event.get("url_compra_entradas"):
+                        buttons.append([InlineKeyboardButton("🎟️ Comprar entradas", url=event["url_compra_entradas"])])
+                    
+                    if event.get("latitude") and event.get("longitude"):
+                        place_doc = db["places"].find_one({"_id": event.get("place_id")})
+                        nombre_lugar = place_doc["name"] if place_doc and place_doc.get("name") else "Lugar"
+                        maps_url = f"https://www.google.com/maps?q={event['latitude']},{event['longitude']}"
+                        buttons.append([InlineKeyboardButton(f"📍 {nombre_lugar}", url=maps_url)])
+
+                    reply_markup = InlineKeyboardMarkup(buttons) if buttons else None
+
                     if event.get("event_image_url"):
                         await update.message.reply_photo(photo=event["event_image_url"])
-                    await update.message.reply_text(texto)
+                    await update.message.reply_text(texto, reply_markup=reply_markup, parse_mode="Markdown")
                     await asyncio.sleep(0.5)
                 return
 
@@ -213,9 +226,23 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
                 for event in events:
                     datos = obtener_datos_evento(event)
                     texto = formatear_evento(event, **datos)
+
+                    # Botones de acción
+                    buttons = []
+                    if event.get("url_compra_entradas"):
+                        buttons.append([InlineKeyboardButton("🎟️ Comprar entradas", url=event["url_compra_entradas"])])
+                    
+                    if event.get("latitude") and event.get("longitude"):
+                        place_doc = db["places"].find_one({"_id": event.get("place_id")})
+                        nombre_lugar = place_doc["name"] if place_doc and place_doc.get("name") else "Lugar"
+                        maps_url = f"https://www.google.com/maps?q={event['latitude']},{event['longitude']}"
+                        buttons.append([InlineKeyboardButton(f"📍 {nombre_lugar}", url=maps_url)])
+
+                    reply_markup = InlineKeyboardMarkup(buttons) if buttons else None
+
                     if event.get("event_image_url"):
                         await update.message.reply_photo(photo=event["event_image_url"])
-                    await update.message.reply_text(texto)
+                    await update.message.reply_text(texto, reply_markup=reply_markup, parse_mode="Markdown")
                     await asyncio.sleep(0.5)
                 return
         
@@ -235,12 +262,25 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
                     datos = obtener_datos_evento(event)
                     texto = formatear_evento(event, **datos)
+
+                    # Botones de acción
+                    buttons = []
+                    if event.get("url_compra_entradas"):
+                        buttons.append([InlineKeyboardButton("🎟️ Comprar entradas", url=event["url_compra_entradas"])])
+                    
+                    if event.get("latitude") and event.get("longitude"):
+                        place_doc = db["places"].find_one({"_id": event.get("place_id")})
+                        nombre_lugar = place_doc["name"] if place_doc and place_doc.get("name") else "Lugar"
+                        maps_url = f"https://www.google.com/maps?q={event['latitude']},{event['longitude']}"
+                        buttons.append([InlineKeyboardButton(f"📍 {nombre_lugar}", url=maps_url)])
+
+                    reply_markup = InlineKeyboardMarkup(buttons) if buttons else None
+
                     if event.get("event_image_url"):
                         await update.message.reply_photo(photo=event["event_image_url"])
-                    await update.message.reply_text(texto)
+                    await update.message.reply_text(texto, reply_markup=reply_markup, parse_mode="Markdown")
                     await asyncio.sleep(0.5)
                 return
-
 
         await update.message.reply_text("😕 Lo siento, no encontré eventos relacionados. Prueba con otro nombre de ciudad, artista o género.")
     

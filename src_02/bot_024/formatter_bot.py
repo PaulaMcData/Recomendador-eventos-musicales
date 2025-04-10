@@ -1,4 +1,6 @@
 from datetime import datetime
+from src_02.database_022.mongodb_connection import connect_to_mongodb_database
+db = connect_to_mongodb_database()
 
 def formatear_fecha_hora_zulu(zulu_str):
     formatos_entrada = [
@@ -17,6 +19,12 @@ def formatear_evento(event, artist_name, city_name, genre_name, subgenre_name, s
     fecha_evento = formatear_fecha_hora_zulu(event.get('event_datetime')) if event.get('event_datetime') else "No disponible"
     start_formatted = formatear_fecha_hora_zulu(event.get('start_date')) if event.get('start_date') else "No disponible"
     end_formatted = formatear_fecha_hora_zulu(event.get('end_date')) if event.get('end_date') else "No disponible"
+    last_seen_formatted = formatear_fecha_hora_zulu(event.get('event_last_seen')) if event.get('event_last_seen') else "No disponible"
+    latitude = event.get('latitude')
+    longitude = event.get('longitude')
+    place_doc = db["places"].find_one({"_id": event.get("place_id")})
+    nombre_lugar = place_doc["name"] if place_doc and place_doc.get("name") else "Localización"
+    maps_url = f"https://www.google.com/maps?q={latitude},{longitude}" if latitude and longitude else "No disponible"
     familiar = event.get('event_family_friendly')
     familiar_str = "Sí, es un evento familiar" if familiar else "No, no es un evento familiar"
 
@@ -36,19 +44,21 @@ def formatear_evento(event, artist_name, city_name, genre_name, subgenre_name, s
     sentiment_normalized = SENTIMENT_NORMALIZED.get(sentiment, None)
 
     texto = f"""
-🎵 Evento: {event.get('event_name', 'No disponible')}
+🎵 Evento: *{event.get('event_name', 'No disponible')}*
 🎤 Artista: {artist_name}
-🏙️ Ciudad: {city_name}
+🏙️ Ciudad: *{city_name}*
+📍 {nombre_lugar}: {maps_url}
 📅 Fecha: {fecha_evento}
 🎼 Segmento: {event.get('segment', 'No disponible')}
 🎵 Género: {genre_name}
 🎶 Subgénero: {subgenre_name}
-🎟️ Estado entradas: {status_name}
-🕒 Venta desde: {start_formatted}
-🚫 Venta hasta: {end_formatted}
-📢 Organizador: {organizer_name}
-👨‍👩‍👧‍👦 Familiar: {familiar_str}
-🔗 Comprar entradas: {event.get('url_compra_entradas', 'No disponible')}
+🎟️ Estado entradas: *{status_name}*
+    🕒 Venta desde: {start_formatted}
+    🚫 Venta hasta: {end_formatted}
+    🔗 Comprar entradas: {event.get('url_compra_entradas', 'No disponible')}
+    📍 Última actualización: {last_seen_formatted}
+    📢 Organizador: {organizer_name}
+    👨‍👩‍👧‍👦 Familiar: {familiar_str}
 """.strip()
     
     if sentiment:
