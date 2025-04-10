@@ -11,8 +11,6 @@ def transform_event_data(event):
         "id": event.get("id"),
         "name": event.get("name"),
         "artist": event.get("_embedded", {}).get("attractions", [{}])[0].get("name", None),
-        "event_date": event.get("dates", {}).get("start", {}).get("localDate"),
-        "event_time": event.get("dates", {}).get("start", {}).get("localTime"),
         "event_datetime": event.get("dates", {}).get("start", {}).get("dateTime"),
         "segment": event.get("classifications", [{}])[0].get("segment", {}).get("name"),
         "genre": event.get("classifications", [{}])[0].get("genre", {}).get("name"),

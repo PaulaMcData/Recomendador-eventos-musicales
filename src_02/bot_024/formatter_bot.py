@@ -1,24 +1,22 @@
 from datetime import datetime
 
-def formatear_hora(hora_str):
-    if hora_str and ":" in hora_str:
-        return ":".join(hora_str.split(":")[:2])
-    return "No disponible"
-
-def formatear_fecha_hora_zulu(zulu_str, fecha_primero=True):
-    try:
-        dt_obj = datetime.strptime(zulu_str, "%Y-%m-%dT%H:%M:%SZ")
-        if fecha_primero:
-            return f"{dt_obj.strftime('%Y-%m-%d')} ⏰ Hora: {dt_obj.strftime('%H:%M')}"
-        else:
-            return f"{dt_obj.strftime('%d-%m-%Y')} ⏰ Hora: {dt_obj.strftime('%H:%M')}"
-    except:
-        return zulu_str
+def formatear_fecha_hora_zulu(zulu_str):
+    formatos_entrada = [
+        "%Y-%m-%dT%H:%M:%SZ",
+        "%Y-%m-%dT%H:%M:%S.%fZ"
+    ]
+    for fmt in formatos_entrada:
+        try:
+            dt_obj = datetime.strptime(zulu_str, fmt)
+            return dt_obj.strftime("%d-%m-%Y ⏰ Hora: %H:%M")
+        except ValueError:
+            continue
+    return zulu_str
 
 def formatear_evento(event, artist_name, city_name, genre_name, subgenre_name, status_name, organizer_name, sentiment):
-    hora_evento = formatear_hora(event.get('event_time', 'No disponible'))
-    start_formatted = formatear_fecha_hora_zulu(event.get('start_date'), fecha_primero=False) if event.get('start_date') else "No disponible"
-    end_formatted = formatear_fecha_hora_zulu(event.get('end_date'), fecha_primero=False) if event.get('end_date') else "No disponible"
+    fecha_evento = formatear_fecha_hora_zulu(event.get('event_datetime')) if event.get('event_datetime') else "No disponible"
+    start_formatted = formatear_fecha_hora_zulu(event.get('start_date')) if event.get('start_date') else "No disponible"
+    end_formatted = formatear_fecha_hora_zulu(event.get('end_date')) if event.get('end_date') else "No disponible"
     familiar = event.get('event_family_friendly')
     familiar_str = "Sí, es un evento familiar" if familiar else "No, no es un evento familiar"
 
@@ -41,7 +39,7 @@ def formatear_evento(event, artist_name, city_name, genre_name, subgenre_name, s
 🎵 Evento: {event.get('event_name', 'No disponible')}
 🎤 Artista: {artist_name}
 🏙️ Ciudad: {city_name}
-📅 Fecha: {event.get('event_date', 'No disponible')} ⏰ Hora: {hora_evento}
+📅 Fecha: {fecha_evento}
 🎼 Segmento: {event.get('segment', 'No disponible')}
 🎵 Género: {genre_name}
 🎶 Subgénero: {subgenre_name}

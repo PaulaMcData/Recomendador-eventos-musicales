@@ -128,7 +128,8 @@ python3 main.py
 ```
 Una vez ejecutado `main.py`, la base de datos MongoDB queda actualizada con toda la información enriquecida.
 
-## 🤖 Bot de Telegram conectado al sistema (Render)
+
+## 🤖 Bot de Telegram conectado al sistema Render
 
 Este proyecto incluye un bot de Telegram que consulta la base de datos MongoDB para recomendar eventos musicales al usuario en función de sus preferencias.
 
