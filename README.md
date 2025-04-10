@@ -10,11 +10,23 @@ Este proyecto es parte del Global Project del Máster en Data Science de IEBS, y
 
 ## 📚 Contenidos
 
-- [Fases del proyecto](#-fases-modulares-del-proyecto-etl-mongodb-sentiment-analysis-nlp---textblob)
-- [Estructura del repositorio](#-estructura-de-carpetas)
-- [Instalación y ejecución](#-cómo-instalar-y-ejecutar-el-proyecto)
-- [Bot de Telegram](#-bot-de-telegram-conectado-al-sistema-render-)
+- [Ramas](#-estructura-de-ramas-en-el-repositorio)
+- [Fases proyecto](#-fases-modulares-del-proyecto-etl-mongodb-sentiment-analysis-nlp---textblob)
+- [Estructura carpetas](#-estructura-de-carpetas)
+- [Próximos pasos](#próximos-pasos)
+- [Instalación](#-cómo-instalar-y-ejecutar-el-proyecto)
+- [Bot Telegram](#-bot-de-telegram-conectado-al-sistema-render)
 
+
+## 🌿 Estructura de ramas en el repositorio
+
+Este repositorio usa tres ramas:
+
+- `main`: congelada tras la entrega.
+- `Global-Project`: copia oficial del proyecto entregado.
+- `Post-Global-Project`: rama en desarrollo y mejoras.
+
+Puedes cambiar de rama en GitHub según lo que necesites consultar.
 
 ## ✅ Fases modulares del proyecto (ETL, MongoDB, Sentiment Analysis NLP - textBlob)
 
