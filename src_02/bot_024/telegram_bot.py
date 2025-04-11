@@ -10,7 +10,7 @@ import unicodedata
 from aiohttp import web
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, MessageHandler, filters
-from config_01 import TELEGRAM_BOT_TOKEN, RENDER_URI
+from config_01 import TELEGRAM_BOT_TOKEN, TEST_TELEGRAM_BOT_TOKEN, RENDER_URI
 from src_02.database_022.mongodb_connection import connect_to_mongodb_database
 from formatter_bot import formatear_evento
 
@@ -54,7 +54,7 @@ async def webhook_handler(request, app):
 async def main():
     try:
         # Inicializa la aplicación del bot
-        app = ApplicationBuilder().token(TELEGRAM_BOT_TOKEN).build()
+        app = ApplicationBuilder().token(TEST_TELEGRAM_BOT_TOKEN).build()
         await app.initialize()  # Inicializa la aplicación explícitamente
         app.add_handler(CommandHandler("hola", hola_command))
         app.add_handler(CommandHandler("ayuda", ayuda_command))

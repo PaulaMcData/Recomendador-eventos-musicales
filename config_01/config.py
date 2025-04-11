@@ -17,3 +17,4 @@ API_URL = f"https://app.ticketmaster.com/discovery/v2/events.json?apikey={API_KE
 
 # Telegram
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TEST_TELEGRAM_BOT_TOKEN = os.getenv("TEST_TELEGRAM_BOT_TOKEN")
